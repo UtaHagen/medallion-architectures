@@ -63,3 +63,26 @@ NULL, NULL, NULL, 'NO', 3, 0);
 GO
 
 -- Data Validation
+
+--- Make your life easier - Databricks
+
+USE CATALOG main;
+-- compare schema with two tables
+
+WITH us_cols AS (
+  SELECT column_name, data_type
+  FROM main.information_schema.columns
+  WHERE table_schema = 'bronze' AND table_name = 'mstaf_1_us'
+),
+uk_cols AS (
+  SELECT column_name, data_type
+  FROM main.information_schema.columns
+  WHERE table_schema = 'bronze' AND table_name = 'mstaf_1_uk'
+)
+
+SELECT
+  us_cols.column_name,
+  us_cols.data_type AS us_data_type,
+  uk_cols.data_type AS uk_data_type
+FROM us_cols
+LEFT JOIN uk_cols ON us_cols.column_name = uk_cols.column_name;
